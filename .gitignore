@@ -11,6 +11,9 @@
 # when editing with VIM
 *.swp
 
+# my hella bad way of keeping track of things
+todo.txt
+
 # files for the dex VM
 *.dex
 

@@ -1,19 +1,27 @@
 package hammondtr.timersheets;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 
 public class TimerSheet extends ActionBarActivity {
 
+    private static final int DEFINE_NEW_TIMER = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // load previous TimerSheet
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer_sheet);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -36,4 +44,33 @@ public class TimerSheet extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        // result of creating timer
+        if (resultCode == Activity.RESULT_OK && requestCode == DEFINE_NEW_TIMER){
+
+            // extract data
+            Bundle timerData = data.getExtras();
+            String timerName = timerData.getString("name");
+
+            // create 'timer' from timerData
+            Button timer = new Button(this);
+            timer.setText(timerName);
+            timer.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            // add to TimerSheet
+            LinearLayout timerSheet = (LinearLayout)findViewById(R.id.activity_timer_sheet);
+            timerSheet.addView(timer);
+        }
+    }
+
+    public void addTimer(View view){
+        // launch CreateTimer activity to determine properties
+        Intent intent = new Intent(this, CreateTimer.class);
+        startActivityForResult(intent, DEFINE_NEW_TIMER);
+    }
+
 }
