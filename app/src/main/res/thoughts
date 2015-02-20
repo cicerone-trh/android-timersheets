@@ -1,0 +1,26 @@
+COMMIT MESSAGE:
+- wrote Db Contract and Helper classes
+- CreateTimer inserts Timer into DB
+- tinkered a bunch with data access etc., spend bunch of time learning about SQLite
+
+- TimerSheet activity onResume() builds list from DB
+
+- Add time setting to timer
+- Implementing actual timer ability
+
+
+
+
+// having to add a database
+
+database will have two tables
+
+one table of timers
+one table of timersheets
+
+timers have name, original duration, final duration, type
+
+
+
+TIMERSHEETS:
+id, name, timers, date created

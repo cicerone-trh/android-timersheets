@@ -12,4 +12,5 @@
         android:text="@string/timer_add"
         android:onClick="addTimer"
         />
+
 </LinearLayout>
