@@ -48,4 +48,8 @@ public class TimerDbHelper extends SQLiteOpenHelper {
         db.insert(TimerDbContract.TimersTable.TABLE_NAME, null, t);
     }
 
+    public void updateTimer(int id, String columnName, String value){
+
+    }
+
 }

@@ -14,4 +14,7 @@
 
     <string name="confirm_create">Add to Sheet</string>
 
+    <string name="timer_start">Go</string>
+    <string name="timer_stop">Stop</string>
+
 </resources>

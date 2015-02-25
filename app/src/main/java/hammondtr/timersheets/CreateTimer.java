@@ -77,7 +77,6 @@ public class CreateTimer extends ActionBarActivity {
         int seconds = Integer.parseInt(sSeconds);
         int timerSeconds = hours*60*60 + minutes*60 + seconds;
 
-
         // bundle data and add/create new timer
         Bundle timerData = new Bundle();
         timerData.putString("name", timerName);
