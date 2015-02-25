@@ -12,13 +12,11 @@ public final class TimerDbContract {
     *  id, name, type, full duration, completed duration, recap, date created
     * */
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "timersheets.db";
-    public static final String CREATE_DATABASE = TimersTable.CREATE_TABLE + ";";
 
     private static final String TEXT_TYPE = " TEXT";
-    private static final String TIME_TYPE = " TEXT";
-    private static final String DATE_TYPE = " TEXT";
+    private static final String TIME_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
 
     public static abstract class TimersTable implements BaseColumns {
@@ -37,7 +35,7 @@ public final class TimerDbContract {
                 COLUMN_NAME_DURATION + TIME_TYPE + COMMA_SEP +
                 COLUMN_NAME_COMPLETED_DURATION + TIME_TYPE + COMMA_SEP +
                 COLUMN_NAME_RECAP + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_CREATED_ON + DATE_TYPE + COMMA_SEP +
+                COLUMN_NAME_CREATED_ON + " DATETIME DEFAULT CURRENT_TIMESTAMP" +
                 " )";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;

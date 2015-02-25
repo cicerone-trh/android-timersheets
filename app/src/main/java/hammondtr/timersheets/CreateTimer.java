@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,21 +49,55 @@ public class CreateTimer extends ActionBarActivity {
 
     public void confirmCreate(View view){
 
-        // verify data is good & db connect is good
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        // get fields
 
-        // get data from fields
-        EditText timerNameField = (EditText) findViewById(R.id.timer_name);
-        String timerName = timerNameField.getText().toString();
+        EditText timerNameField, timerCategoryField, hoursField, minutesField, secondsField;
+        timerNameField = (EditText) findViewById(R.id.timer_name);
+        timerCategoryField = (EditText) findViewById(R.id.timer_type);
+        hoursField = (EditText) findViewById(R.id.timer_hours);
+        minutesField = (EditText) findViewById(R.id.timer_minutes);
+        secondsField = (EditText) findViewById(R.id.timer_seconds);
+
+        // convert to dataz
+
+        String timerName, timerCat, sHours, sMinutes, sSeconds;
+        timerName = timerNameField.getText().toString();
+        timerCat = timerCategoryField.getText().toString();
+
+        // can't parseInt("") ~ woo woo learning Java - replacing "" with "0"
+        sHours = (hoursField.getText().toString().equals("")) ?
+                "0" : hoursField.getText().toString();
+        sMinutes = (minutesField.getText().toString().equals("")) ?
+                "0" : minutesField.getText().toString();
+        sSeconds = (secondsField.getText().toString().equals("")) ?
+                "0" : secondsField.getText().toString();
+
+        int hours = Integer.parseInt(sHours);
+        int minutes = Integer.parseInt(sMinutes);
+        int seconds = Integer.parseInt(sSeconds);
+        int timerSeconds = hours*60*60 + minutes*60 + seconds;
+
+
+        // bundle data and add/create new timer
+        Bundle timerData = new Bundle();
+        timerData.putString("name", timerName);
+        timerData.putString("type", timerCat);
+        timerData.putInt("initDuration", timerSeconds);
+
+        dbHelper.addNewTimer(timerData);
+
+        finish();
 
         // db insert
-        ContentValues timerData = new ContentValues();
-        timerData.put(TimerDbContract.TimersTable.COLUMN_NAME_NAME, timerName);
+        // verify data is good & db connect is good
+        // SQLiteDatabase db = dbHelper.getWritableDatabase();
+        /*
+        ContentValues timerDataCustom = new ContentValues();
+        timerDataCustom.put(TimerDbContract.TimersTable.COLUMN_NAME_NAME, timerName);
 
-        db.insert(TimerDbContract.TimersTable.COLUMN_NAME_NAME, null, timerData);
+        db.insert(TimerDbContract.TimersTable.TABLE_NAME, null, timerDataCustom);
 
         // build intent
-        /*
         Bundle timerData = new Bundle();
         timerData.putString("name", timerName);
 
@@ -70,7 +105,12 @@ public class CreateTimer extends ActionBarActivity {
         intent.putExtras(timerData);
         setResult(RESULT_OK, intent);
         */
-        finish();
+
+    }
+
+    private int convertTimeInputToSeconds(String timeString){
+        int s = 0;
+        return s;
     }
 
 }

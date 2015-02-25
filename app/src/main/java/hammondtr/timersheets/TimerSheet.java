@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -32,7 +33,47 @@ public class TimerSheet extends ActionBarActivity {
     public void onResume() {
         super.onResume();
 
-        // check for new timers and update list
+        // (temporary) to check it's working; should check before rebuild
+        // add timers from database
+
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        String[] projection = {
+                TimerDbContract.TimersTable.COLUMN_NAME_NAME,
+                TimerDbContract.TimersTable.COLUMN_NAME_CATEGORY,
+                TimerDbContract.TimersTable.COLUMN_NAME_COMPLETED_DURATION
+        };
+
+        Cursor cursor = db.query(
+                TimerDbContract.TimersTable.TABLE_NAME,
+                projection,
+                null, null, null, null, null
+        );
+
+        Timer newTimer;
+        Bundle timerInfo;
+        String name, category; int cDur;
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            newTimer = new Timer();
+            timerInfo = new Bundle();
+
+            // extract values
+            name = cursor.getString(0);
+            category = cursor.getString(1);
+            cDur = cursor.getInt(2);
+
+            // setup timer argzzzzz
+            timerInfo.putString("name", name);
+            timerInfo.putString("type", category);
+            timerInfo.putInt("duration", cDur);
+
+            newTimer.setArguments(timerInfo);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.activity_timer_sheet, newTimer).commit();
+
+            cursor.moveToNext();
+        }
 
         /*
         Bundle timerData = data.getExtras();

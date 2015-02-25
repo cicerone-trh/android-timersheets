@@ -3,20 +3,158 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/timer_name"
-        android:layout_weight = "1"
-        android:layout_width="0dp"
+    <!-- Name -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/new_timer_name_hint"
+        android:paddingTop="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        >
+        <TextView
+            android:id="@+id/timer_name_label"
+            android:textColor="#000"
+            android:text="@string/name_label"
+            android:textSize="20sp"
+
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+         />
+        <EditText
+            android:id="@+id/timer_name"
+            android:hint="@string/new_timer_name_hint"
+            android:textSize="20sp"
+            android:paddingLeft="8dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
         />
+    </LinearLayout>
+    <!-- Category -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        >
+        <TextView
+            android:id="@+id/timer_type_label"
+            android:textColor="#000"
+            android:text="@string/type_label"
+            android:textSize="20sp"
+
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            />
+        <EditText
+            android:id="@+id/timer_type"
+            android:hint="@string/new_timer_type_hint"
+            android:textSize="20sp"
+            android:paddingLeft="8dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <!-- Time Labels -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="40dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        >
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+
+            android:text="h"/>
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+
+            android:text="m"
+            />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+
+            android:text="s"
+            />
+
+    </LinearLayout>
+    <!-- Time Inputs -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="40dp"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        >
+        <EditText
+            android:id="@+id/timer_hours"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+            android:inputType="number"
+            android:textSize="36sp"
+            android:maxLength="3"
+
+            android:hint="00"
+            />
+        <EditText
+            android:id="@+id/timer_minutes"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+            android:inputType="number"
+            android:textSize="36sp"
+            android:maxLength="3"
+
+            android:hint="00"
+            />
+        <EditText
+            android:id="@+id/timer_seconds"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+            android:inputType="number"
+            android:textSize="36sp"
+            android:maxLength="3"
+
+            android:hint="00"
+            />
+
+    </LinearLayout>
+
     <Button
         android:text="@string/confirm_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="confirmCreate"
-        />
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

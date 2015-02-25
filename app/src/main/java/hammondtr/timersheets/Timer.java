@@ -39,10 +39,12 @@ public class Timer extends Fragment {
         // Inflate layout to edit
         View timerView = inflater.inflate(R.layout.fragment_timer, container, false);
         TextView timerName = (TextView) timerView.findViewById(R.id.timerName);
+        TextView timerDuration = (TextView) timerView.findViewById(R.id.timerDuration);
 
         // setup custom layout details
         Bundle timerInfo = getArguments();
         timerName.setText(timerInfo.getString("name"));
+        timerDuration.setText((new Integer(timerInfo.getInt("duration"))).toString());
 
         return timerView;
     }

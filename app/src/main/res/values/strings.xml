@@ -6,8 +6,12 @@
     <string name="action_settings">Settings</string>
     <string name="timer_add">Create New Timer</string>
     <string name="title_activity_create_timer">CreateTimer</string>
-    <string name="new_timer_name_hint">Name for Timer</string>
+
+    <string name="name_label">Name: </string>
+    <string name="new_timer_name_hint">i.e. \"droid \'grammin\"</string>
+    <string name="type_label">Type: </string>
+    <string name="new_timer_type_hint">Optional Category</string>
+
     <string name="confirm_create">Add to Sheet</string>
-    <string name="hello_blank_fragment">Default Name</string>
 
 </resources>
