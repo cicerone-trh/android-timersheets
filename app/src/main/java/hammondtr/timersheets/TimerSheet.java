@@ -1,6 +1,7 @@
 package hammondtr.timersheets;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,80 +14,64 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class TimerSheet extends ActionBarActivity {
 
     private static final int DEFINE_NEW_TIMER = 1;
     private TimerDbHelper dbHelper;
     private SQLiteDatabase db;
+    private boolean isNewTimer;
+    private Bundle newTimerInfo;
+    private List<Timer> timers;
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        // initialization
         setContentView(R.layout.activity_timer_sheet);
         dbHelper = new TimerDbHelper(this);
         db = dbHelper.getReadableDatabase();
+        isNewTimer = false;
+        fragmentManager = getSupportFragmentManager();
+        timers = new ArrayList<Timer>();
+
+        // add Timer fragments from current Timesheet (saved in userprefs)
+        /***** temporary: no timesheet table *****/
+
+        loadTimesheet(0);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // (temporary) to check it's working; should check before rebuild
-        // add timers from database
+        if (isNewTimer) {
+            // add Timer to Timer Fragments
+            Timer timer = new Timer();
 
-        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        String[] projection = {
-                TimerDbContract.TimersTable.COLUMN_NAME_NAME,
-                TimerDbContract.TimersTable.COLUMN_NAME_CATEGORY,
-                TimerDbContract.TimersTable.COLUMN_NAME_COMPLETED_DURATION
-        };
-
-        Cursor cursor = db.query(
-                TimerDbContract.TimersTable.TABLE_NAME,
-                projection,
-                null, null, null, null, null
-        );
-
-        Timer newTimer;
-        Bundle timerInfo;
-        String name, category; int cDur;
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()){
-            newTimer = new Timer();
-            timerInfo = new Bundle();
-
-            // extract values
-            name = cursor.getString(0);
-            category = cursor.getString(1);
-            cDur = cursor.getInt(2);
-
-            // setup timer argzzzzz
-            timerInfo.putString("name", name);
-            timerInfo.putString("type", category);
-            timerInfo.putInt("duration", cDur);
-
-            newTimer.setArguments(timerInfo);
+            timer.setArguments(newTimerInfo);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_timer_sheet, newTimer).commit();
-
-            cursor.moveToNext();
+                    .add(R.id.activity_timer_sheet, timer).commit();
+            timers.add(timer);
+            isNewTimer = false;
         }
+    }
 
-        /*
-        Bundle timerData = data.getExtras();
-        Timer timer = new Timer();
-        timer.setArguments(timerData);
+    @Override
+    protected void onStop() {
+        super.onStop();
 
-        // add Timer to TimerSheet
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.activity_timer_sheet, timer).commit();
-        */
-
-        // Check for new Timers
-            // Add new Timers to list
+        // save Timers to SharedPrefs ?
+        // save Timers to DB
+        for (Timer t : timers) {
+            t.stopTimer();
+        }
     }
 
     @Override
@@ -113,31 +98,69 @@ public class TimerSheet extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        // result of creating timer
+        // set new timer variable for onResume
         if (resultCode == Activity.RESULT_OK && requestCode == DEFINE_NEW_TIMER){
-
-
             // create Timer from timerData
-            Bundle timerData = data.getExtras();
-            Timer timer = new Timer();
-            timer.setArguments(timerData);
-
-            // add Timer to TimerSheet
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_timer_sheet, timer).commit();
-
-
-
+            newTimerInfo = data.getExtras();
+            isNewTimer = true;
         }
     }
 
     public void addTimer(View view){
-        // launch CreateTimer activity to determine properties
+        // launch CreateTimer activity
         Intent intent = new Intent(this, CreateTimer.class);
-        startActivity(intent);
+        startActivityForResult(intent, DEFINE_NEW_TIMER);
+    }
 
-        // startActivityForResult(intent, DEFINE_NEW_TIMER);
+    private void loadTimesheet(long timesheetId) {
+        // remove current timers
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
+        // load timers related to timesheet
+        String[] projection = {
+                TimerDbContract.TimersTable._ID,
+                TimerDbContract.TimersTable.COLUMN_NAME_NAME,
+                TimerDbContract.TimersTable.COLUMN_NAME_CATEGORY,
+                TimerDbContract.TimersTable.COLUMN_NAME_COMPLETED_DURATION
+        };
+
+        Cursor cursor = db.query(
+                TimerDbContract.TimersTable.TABLE_NAME,
+                projection,
+                null, null, null, null, null
+        );
+
+        // populate TimerSheet with Timer fragments
+
+        long tId;
+        Timer newTimer;
+        Bundle timerInfo;
+        String name, category; int cDur;
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()){
+            newTimer = new Timer();
+            timerInfo = new Bundle();
+
+            // extract values
+            tId = cursor.getLong(0);
+            name = cursor.getString(1);
+            category = cursor.getString(2);
+            cDur = cursor.getInt(3);
+
+            // setup timer argzzzzz
+            timerInfo.putString("name", name);
+            timerInfo.putString("type", category);
+            timerInfo.putInt("duration", cDur);
+            timerInfo.putLong("id", tId);
+
+            newTimer.setArguments(timerInfo);
+            fragmentManager.beginTransaction()
+                    .add(R.id.activity_timer_sheet, newTimer).commit();
+            timers.add(newTimer);
+
+            cursor.moveToNext();
+        }
     }
 
 }

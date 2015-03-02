@@ -28,10 +28,11 @@ public class TimerDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addNewTimer(Bundle timerData){
+    // returns id
+    public long addNewTimer(Bundle timerData){
+
         // extract timerData, create ContentValues, insert
         SQLiteDatabase db = this.getWritableDatabase();
-        int n;
         ContentValues t = new ContentValues();
 
         if (timerData.getString("name") != null){
@@ -43,13 +44,27 @@ public class TimerDbHelper extends SQLiteOpenHelper {
 
         // duration is either 0 or something, so no need to check; if it's 0 it's a stopwatch
         t.put(TimerDbContract.TimersTable.COLUMN_NAME_DURATION, timerData.getInt("initDuration"));
-        t.put(TimerDbContract.TimersTable.COLUMN_NAME_COMPLETED_DURATION, timerData.getInt("initDuration"));
+        t.put(TimerDbContract.TimersTable.COLUMN_NAME_COMPLETED_DURATION, timerData.getInt("duration"));
 
-        db.insert(TimerDbContract.TimersTable.TABLE_NAME, null, t);
+        // insert and return id
+        return db.insert(TimerDbContract.TimersTable.TABLE_NAME, null, t);
+
     }
 
-    public void updateTimer(int id, String columnName, String value){
+    public void updateTimerTime(long id, int timeElapsed){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
+        values.put(TimerDbContract.TimersTable.COLUMN_NAME_COMPLETED_DURATION, timeElapsed);
+
+        String selection = TimerDbContract.TimersTable._ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(id) };
+        db.update(
+            TimerDbContract.TimersTable.TABLE_NAME,
+            values,
+            selection,
+            selectionArgs
+        );
     }
 
 }

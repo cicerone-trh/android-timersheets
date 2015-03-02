@@ -11,26 +11,18 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
-/*
-    notes: It's gonna take a bit of figuring out how to save the timers; dunno if I'll use
-    something like TimeSpan in C# or if I need to write something myself to convert an int
-    or what. Currently, the DB will save durations as TEXT and I'm planning to convert
-    that in the code. We'll see what's up. Just making a note.
-
-    DateUtils: android framework
-*/
-
-
 public class Timer extends Fragment {
 
     private String name;
+    private long id;
     private String category;
     private int initialDuration;
     private String recap;
 
-    private int currentDurationMs;              // in milliseconds
+    private long currentDurationMs;              // in milliseconds
     private CountDownTimer countDownTimer;
     private TextView timerDuration;
+    private TimerDbHelper dbHelper;
 
     public Timer() {
         // Required empty public constructor
@@ -45,11 +37,16 @@ public class Timer extends Fragment {
         TextView timerName = (TextView) timerView.findViewById(R.id.timerName);
         timerDuration = (TextView) timerView.findViewById(R.id.timerDuration);
 
-        // setup custom layout details
+        // initialize timer, setup custom layout details
         Bundle timerInfo = getArguments();
-        timerName.setText(timerInfo.getString("name"));
-        timerDuration.setText(new Integer(timerInfo.getInt("duration")).toString());
+        id = timerInfo.getLong("id");
+        name = timerInfo.getString("name");
         currentDurationMs = timerInfo.getInt("duration") * 1000;
+        dbHelper = new TimerDbHelper(getActivity());
+
+        timerName.setText(name);
+        timerDuration.setText(timeLeftAsString());
+
 
         // add onClick listener
         Button timerControl = (Button) timerView.findViewById(R.id.timerControl);
@@ -79,7 +76,7 @@ public class Timer extends Fragment {
 
             public void onTick(long timeLeft) {     // timeLeft is in milliseconds
                 currentDurationMs = (int) timeLeft;   // living dangerously; > 500 hour timer = bad
-                timerDuration.setText(new Integer(currentDurationMs/1000).toString());
+                timerDuration.setText(timeLeftAsString());
             }
 
             public void onFinish() {
@@ -92,6 +89,18 @@ public class Timer extends Fragment {
     public void stopTimer() {
         // stop timer and insert info into DB
         countDownTimer.cancel();
+        dbHelper.updateTimerTime(id, (int) currentDurationMs/1000);
+    }
+
+    private String timeLeftAsString() {
+        int seconds = (int) currentDurationMs / 1000;
+        int hours, minutes;
+        hours = seconds / 3600;
+        seconds = seconds % 3600;
+        minutes = seconds / 60;
+        seconds = seconds % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
 }

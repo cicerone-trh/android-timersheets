@@ -50,7 +50,6 @@ public class CreateTimer extends ActionBarActivity {
     public void confirmCreate(View view){
 
         // get fields
-
         EditText timerNameField, timerCategoryField, hoursField, minutesField, secondsField;
         timerNameField = (EditText) findViewById(R.id.timer_name);
         timerCategoryField = (EditText) findViewById(R.id.timer_type);
@@ -59,7 +58,6 @@ public class CreateTimer extends ActionBarActivity {
         secondsField = (EditText) findViewById(R.id.timer_seconds);
 
         // convert to dataz
-
         String timerName, timerCat, sHours, sMinutes, sSeconds;
         timerName = timerNameField.getText().toString();
         timerCat = timerCategoryField.getText().toString();
@@ -77,39 +75,19 @@ public class CreateTimer extends ActionBarActivity {
         int seconds = Integer.parseInt(sSeconds);
         int timerSeconds = hours*60*60 + minutes*60 + seconds;
 
-        // bundle data and add/create new timer
+        // bundle data and add to db/result
         Bundle timerData = new Bundle();
         timerData.putString("name", timerName);
         timerData.putString("type", timerCat);
         timerData.putInt("initDuration", timerSeconds);
+        timerData.putInt("duration", timerSeconds);     // oncreate this is the same as init
 
         dbHelper.addNewTimer(timerData);
-
-        finish();
-
-        // db insert
-        // verify data is good & db connect is good
-        // SQLiteDatabase db = dbHelper.getWritableDatabase();
-        /*
-        ContentValues timerDataCustom = new ContentValues();
-        timerDataCustom.put(TimerDbContract.TimersTable.COLUMN_NAME_NAME, timerName);
-
-        db.insert(TimerDbContract.TimersTable.TABLE_NAME, null, timerDataCustom);
-
-        // build intent
-        Bundle timerData = new Bundle();
-        timerData.putString("name", timerName);
 
         Intent intent = new Intent();
         intent.putExtras(timerData);
         setResult(RESULT_OK, intent);
-        */
-
-    }
-
-    private int convertTimeInputToSeconds(String timeString){
-        int s = 0;
-        return s;
+        finish();
     }
 
 }
