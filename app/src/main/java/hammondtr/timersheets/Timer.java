@@ -21,8 +21,10 @@ public class Timer extends Fragment {
 
     private long currentDurationMs;              // in milliseconds
     private CountDownTimer countDownTimer;
-    private TextView timerDuration;
     private TimerDbHelper dbHelper;
+
+    private TextView timerDuration;
+    private Button timerControl;
 
     public Timer() {
         // Required empty public constructor
@@ -49,7 +51,7 @@ public class Timer extends Fragment {
 
 
         // add onClick listener
-        Button timerControl = (Button) timerView.findViewById(R.id.timerControl);
+        timerControl = (Button) timerView.findViewById(R.id.timerControl);
         timerControl.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -58,10 +60,8 @@ public class Timer extends Fragment {
                 String currentText = toggleButton.getText().toString();
 
                 if (currentText.equals(getString(R.string.timer_stop))) {
-                    toggleButton.setText(R.string.timer_start);
                     stopTimer();
                 } else {
-                    toggleButton.setText(R.string.timer_stop);
                     startTimer();
                 }
             }
@@ -71,7 +71,7 @@ public class Timer extends Fragment {
     }
 
     private void startTimer() {
-
+        timerControl.setText(R.string.timer_stop);
         countDownTimer = new CountDownTimer(currentDurationMs, 1000) {
 
             public void onTick(long timeLeft) {     // timeLeft is in milliseconds
@@ -80,16 +80,21 @@ public class Timer extends Fragment {
             }
 
             public void onFinish() {
-
+                // alarm goes off
+                // prompt for recap
+                // set timer as finished (greyed out, check-mark button)
             }
         }.start();
 
     }
     // this should probably be called onQuit or w/e from main activity
     public void stopTimer() {
-        // stop timer and insert info into DB
-        countDownTimer.cancel();
-        dbHelper.updateTimerTime(id, (int) currentDurationMs/1000);
+        if (countDownTimer != null) {
+            // stop timer and insert info into DB
+            timerControl.setText(R.string.timer_start);
+            countDownTimer.cancel();
+            dbHelper.updateTimerTime(id, (int) currentDurationMs/1000);
+        }
     }
 
     private String timeLeftAsString() {
@@ -102,5 +107,7 @@ public class Timer extends Fragment {
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
+
+    private void finishTimer(){}
 
 }
